@@ -33,13 +33,13 @@ public class GameManager : MonoBehaviour {
 
 	public int readiness = 0;
 	public int readinessCondition = 50;
-	public int prosperity = 0;
+	public int treasury = 0;
 	public int amtOfDays = 14;
 	public int daysLeft;
 	public bool playingForever = false;
 	public Text dayText;
 	public Text readyText;
-	public Text prospText;
+	public Text treasuryText;
 	public Button theButton;
 	public GameObject overScreen;
 
@@ -58,18 +58,12 @@ public class GameManager : MonoBehaviour {
 
 		print("running setup");
 		SetupPlayerDeck();
-		ChangeProsperity(GlobalProsperity());
+        ChangeTreasury(10);
 		ChangeReadiness(0);
 
 		SwitchState(startState);
 	
 	}
-	
-	// Update is called once per frame
-	void Update () {
-
-	}
-
 
 	public void PressedButton(){
 		SwitchState(State.Outcome);
@@ -183,6 +177,7 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 
+        firstRevolt = true;
 		//yield return new WaitForSeconds(0.1f);
 		foreach(Card c in playur.currentDeck){
 			if(!c.isPlaced && c.isInHand){
@@ -201,7 +196,6 @@ public class GameManager : MonoBehaviour {
 		yield return new WaitForSeconds(1.4f);
 
 		cm.CheckForNewCards();
-		ChangeProsperity(GlobalProsperity());
 
 		for (int i = 0; i < allCards.Count; i++) {
 			if(allCards[i].Status() <= 0 && !allCards[i].isDead){
@@ -258,18 +252,18 @@ public class GameManager : MonoBehaviour {
 		readyText.text = "Defenses: "+readiness+"/"+readinessCondition;
 	}
 
-	public void ChangeProsperity(int ch){
-		prosperity = ch;
-		prospText.text = "Prosperity: "+prosperity;
+	public void ChangeTreasury(int ch){
+		treasury += ch;
+		treasuryText.text = "Treasury: "+treasury;
 	}
 
 	public int GlobalProsperity(){
 		int sum = 0;
-		foreach(Slot s in slots){
-			if(s.slotName != "Distant Lands"){
-				sum += s.prosperity;
-			}
-		}
+	//	foreach(Slot s in slots){
+	//		if(s.slotName != "Distant Lands"){
+	//			sum += s.prosperity;
+	//		}
+	//	}
 		return sum;
 	}
 

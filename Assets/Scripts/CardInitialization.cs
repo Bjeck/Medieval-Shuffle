@@ -50,13 +50,13 @@ public class CardInitialization : MonoBehaviour {
 		cardObj = (GameObject)Instantiate(CardPrefab);
 		newCard = cardObj.GetComponent<Card>();
 		newCard.nam = "The Bored King";
-		newCard.desc = "He's very sorry.";
+		newCard.desc = "He's not sorry.";
 		newCard.id = "king";
 		newCard.function = "Prosperity -2";
 		newCard.functionLong = "Decreases Prosperity with 2";
 		newCard.fear = 4;
 		newCard.wealth = 10;
-		newCard.unruliness = 2;
+		newCard.unruliness = 5;
 		newCard.onPlayed = (sl, c) => {FunctionToExecute(sl, c); ChangeProsperity(sl,c,-2);}; 	//ALWAYS DECREASES PROSPERITY BY 2
 		newCard.transform.SetParent(gm.cardBar.transform);
 		newCard.GetComponent<RectTransform>().localScale = Vector3.one;
@@ -253,13 +253,13 @@ public class CardInitialization : MonoBehaviour {
 	}
 
 	public void ChangeProsperity(Slot so, Card c, int i){
-		so.prosperity += (i);
-		print(c.nam+" Changed prosperity of "+so.slotName+" from "+ (so.prosperity-i) + " to "+so.prosperity);
+	//	so.prosperity += (i);
+	//	print(c.nam+" Changed prosperity of "+so.slotName+" from "+ (so.prosperity-i) + " to "+so.prosperity);
 	}
 
 	public void ChangeProsperityRandom(Slot so, Card c){
-		so.prosperity += Random.Range(-2,2);
-		print("Changed "+so.slotName+"'s prosperity! Now "+so.prosperity);
+	//	so.prosperity += Random.Range(-2,2);
+	//	print("Changed "+so.slotName+"'s prosperity! Now "+so.prosperity);
 	}
 
 	public void ChangeWealth(Slot s, Card c, int i){

@@ -8,7 +8,7 @@ public class CardManager : MonoBehaviour {
 
 	public GameManager gm;
 
-	Slot castle, castlewing, prison, lands, farm, village, forest, university;
+	Slot barracks, palisade, prison, lands, farm, village, forest, university;
 
 	public bool baby, executioner, thief, magician, knight, prince, princess, bastard, stranger = false;
 
@@ -23,8 +23,8 @@ public class CardManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		castle = gm.slots.Find(x=>x.slotName == "Castle");
-		castlewing = gm.slots.Find(x=>x.slotName == "Castle Wing");
+		barracks = gm.slots.Find(x=>x.slotName == "Barracks");
+		palisade = gm.slots.Find(x=>x.slotName == "Palisade");
 		prison = gm.slots.Find(x=>x.slotName == "Prison");
 		lands = gm.slots.Find(x=>x.slotName == "Distant Lands");
 		farm = gm.slots.Find(x=>x.slotName == "Farm");
@@ -54,9 +54,9 @@ public class CardManager : MonoBehaviour {
 //		print("checking "+prince);
 
 		if(!baby){
-			if(castle.cardOnMe != null && castlewing.cardOnMe != null){
-				if(castle.cardOnMe.id == "king" || castle.cardOnMe.id == "queen"){
-					if(castlewing.cardOnMe.id == "king" || castlewing.cardOnMe.id == "queen"){
+			if(barracks.cardOnMe != null && palisade.cardOnMe != null){
+				if(barracks.cardOnMe.id == "king" || barracks.cardOnMe.id == "queen"){
+					if(palisade.cardOnMe.id == "king" || palisade.cardOnMe.id == "queen"){
 						gm.AddCardToPlayer(gm.allCards.Find(x=>x.id == "baby"));
 						gm.AddMessageToLog("A baby has been born in the kingdom! Rejoice!");
 						gm.sound.PlayAudio(gm.sound.bell);
@@ -67,9 +67,9 @@ public class CardManager : MonoBehaviour {
 		}
 
 		if(!bastard){
-			if(castle.cardOnMe != null && castlewing.cardOnMe != null){
-				if(castle.cardOnMe.id == "knight" || castle.cardOnMe.id == "queen"){
-					if(castlewing.cardOnMe.id == "knight" || castlewing.cardOnMe.id == "queen"){
+			if(barracks.cardOnMe != null && palisade.cardOnMe != null){
+				if(barracks.cardOnMe.id == "knight" || barracks.cardOnMe.id == "queen"){
+					if(palisade.cardOnMe.id == "knight" || palisade.cardOnMe.id == "queen"){
 						gm.AddCardToPlayer(gm.allCards.Find(x=>x.id == "bastard"));
 						gm.AddMessageToLog("The Queen has given birth to a child. But the kingdom suspects the King is not the father.");
 						bastard = true;
@@ -77,8 +77,8 @@ public class CardManager : MonoBehaviour {
 
 					}
 				}
-				else if(castle.cardOnMe.id == "stranger" || castle.cardOnMe.id == "king"){
-					if(castlewing.cardOnMe.id == "stranger" || castlewing.cardOnMe.id == "king"){
+				else if(barracks.cardOnMe.id == "stranger" || barracks.cardOnMe.id == "king"){
+					if(palisade.cardOnMe.id == "stranger" || palisade.cardOnMe.id == "king"){
 						gm.AddCardToPlayer(gm.allCards.Find(x=>x.id == "bastard"));
 						gm.AddMessageToLog("The Stranger has given birth to a child. But the King is the father.");
 						bastard = true;

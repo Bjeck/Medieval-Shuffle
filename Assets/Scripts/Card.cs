@@ -84,7 +84,7 @@ public class Card : MonoBehaviour {
 				}
 				if(s.cardOnMe == null && !r.gameObject.GetComponent<Slot>().isBroken){
 					if(s.cardPlacedHereLast != this){
-						if(!(s.changeWealth < 0 && wealth <= 0)){
+						if(!(s.changeMoney < 0 && wealth <= 0)){
 							if(s.frame.color != s.cardColor){
 								if(slotForDrag != null && !slotForDrag.isBroken){
 									slotForDrag.ChangeColor(slotForDrag.defColor);
@@ -136,7 +136,7 @@ public class Card : MonoBehaviour {
 					Slot s = r.gameObject.GetComponent<Slot>();
 					if(s.cardOnMe == null && !r.gameObject.GetComponent<Slot>().isBroken){
 						if(s.cardPlacedHereLast != this){
-							if(!(s.changeWealth < 0 && wealth <= 0)){
+							if(!(s.changeMoney < 0 && wealth <= 0)){
 								PlaceCardOnSlot(r.gameObject.GetComponent<Slot>());
 								return;
 							}
@@ -172,7 +172,7 @@ public class Card : MonoBehaviour {
 		if(anim.GetBool("flipped")){
 			CardFlip(false);
 		}
-		print("placed Card "+nam+" on Slot "+s.slotName+" with "+s.prosperity);
+		print("placed Card "+nam+" on Slot "+s.slotName);
 		Do(s);
 	}
 

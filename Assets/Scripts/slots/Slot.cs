@@ -2,80 +2,110 @@
 using System.Collections;
 using UnityEngine.UI;
 using System;
+using System.Collections.Generic;
+using UnityEngine.Events;
 
 public class Slot : MonoBehaviour {
 
+    [HideInInspector]
 	public GameManager gm;
 	public Card cardOnMe;
 	public Card cardPlacedHereLast;
+    public Text nameText;
 	public Text desctext;
 	public Image icon;
 	public Text wText;
 	public Text fText;
 	public Text dText;
+    public Text moneyText;
 	public string slotName;
 	public Image onNextImg;
 	public Image weatherImg;
 	public bool weatherActive = false;
 	public Transform cardPos;
 
-	public int prosperity = 0;
+	public int energy = 2;
 
-	public int changeFear = 0;
-	public int changeWealth = 0;
-	public int changeReadiness = 0;
-	public bool prosperityOppositeWealth = true;
+	public int changeAuthority = 0;
+	public int changeMoney = 0;
+	public int changeDefense = 0;
+
+    public bool moneyGenerator = false;
+    public int moneyToGenerate = 0;
+    public int availableMoney = 0;
 
 	public bool isBroken = false;
-	public int turnsToBeBroken = 2;
+	public int turnsToBeBroken = 1;
 	int curTurnsBroken = 0;
 
+    public SlotAddition slotAddition = null;
 
 	public Action<Card, int, int, int> OnNext;
 	public Action<Card, int, int, int> OnNextNext;
 	public bool readyNext = false; Card refForNextChecK;
 	public string onNextDesc, onNextNextDesc;
 
+    public List<UnityEvent> possibleRandomEvents = new List<UnityEvent>();
+
 	public Image frame;
 	public Color defColor;
 	public Color cardColor;
 	public Color brokenColor;
 
-	// Use this for initialization
-	void Start () {
-	
-		desctext.text = ("Prosperity: "+prosperity);
-		fText.text = ""+changeFear;
-		wText.text = ""+changeWealth;
-		dText.text = ""+changeReadiness;
-		ChangeColor(defColor);
+    private void Awake()
+    {
+        gm = GameObject.Find("Manager").GetComponent<GameManager>(); //AAAAAAAA
+    }
+
+    // Use this for initialization
+    void Start () {
+
+        energy = 2;
+        nameText.text = slotName;
+        UpdateText();
+
+        moneyText.transform.parent.gameObject.SetActive(moneyGenerator == false ? false : true);
+        dText.transform.parent.gameObject.SetActive(changeDefense == 0 ? false : true);
+        wText.transform.parent.gameObject.SetActive(changeMoney == 0 ? false : true);
+        fText.transform.parent.gameObject.SetActive(changeAuthority == 0 ? false : true);
+
+        ChangeColor(defColor);
 	}
 
-	public void ProcessOutComeForCard(){
-		if(isBroken){
-			if(curTurnsBroken <= 0){
-				UnBreak();
-			}
-			else{
-				curTurnsBroken--;
-				return;
-			}
+
+	public virtual void ProcessOutComeForCard(){
+
+        if(slotAddition != null)
+        {
+            slotAddition.PreProcessOutcome();
+        }
+
+        if (isBroken)
+        {
+			curTurnsBroken--;
+            if (curTurnsBroken <= 0)
+            {
+                UnBreak();
+            }
+            return;
 		}
 
 		if(cardOnMe != null && !weatherActive){
 
-//			print("processing");
-			cardOnMe.fear += changeFear;
-			cardOnMe.wealth += changeWealth;
-			if(prosperityOppositeWealth){
-				prosperity -= changeWealth;
-			}
-			else {
-				prosperity += changeWealth;
-			}
-			gm.ChangeReadiness(changeReadiness);
+			cardOnMe.fear += changeAuthority;
+			cardOnMe.wealth += changeMoney;
 
-			print(slotName+" PROCESSED "+cardOnMe.nam+". Fear "+cardOnMe.fear+". Wealth "+cardOnMe.wealth+". Prosperity is "+prosperity);
+            //IF 
+            if(availableMoney > 0)
+            {
+                Debug.Log("change treasury " + slotName + " " + availableMoney + " " + gm.treasury);
+                gm.ChangeTreasury(availableMoney);
+                availableMoney = 0;
+            }
+
+            gm.ChangeReadiness(changeDefense);
+
+			print(slotName+" PROCESSED "+cardOnMe.nam+". Fear "+cardOnMe.fear+". Wealth "+cardOnMe.wealth+". Energy is "+energy);
 
 			if(OnNext != null && readyNext && cardOnMe != refForNextChecK){
 				print(slotName+" executed on next "+readyNext+" "+OnNext);
@@ -98,33 +128,45 @@ public class Slot : MonoBehaviour {
 			}
 
 
-			UpdateText();
-
 			refForNextChecK = null;
 
-			if(prosperity <= 0){
+            energy--;
+
+            if (energy <= 0){
 				Break();
 			}
 
 			cardOnMe.SetCardText();
 
 		}
-		if(weatherActive){
-			DeActivateWeather();
-		}
 
 
-	}
+        if (slotAddition != null)
+        {
+            slotAddition.PostProcessOutcome();
+        }
+
+        
+
+        if (weatherActive)
+        {
+            DeActivateWeather();
+        }
+
+        UpdateText();
+    }
 
 	public void UpdateText(){
-		fText.text = ""+changeFear;
-		wText.text = ""+changeWealth;
-		dText.text = ""+changeReadiness;
-		desctext.text = ("Prosperity: "+prosperity);
-	}
+		fText.text = ""+changeAuthority;
+		wText.text = ""+changeMoney;
+		dText.text = ""+changeDefense;
+        moneyText.text = "" + availableMoney;
+
+        desctext.text = ("Energy: "+energy);
+    }
 
 
-	public void Break(){
+    public void Break(){
 		curTurnsBroken = turnsToBeBroken;
 		isBroken = true;
 		icon.color = Color.black;
@@ -138,7 +180,7 @@ public class Slot : MonoBehaviour {
 	public void UnBreak(){
 		isBroken = false;
 		icon.color = Color.white;
-		prosperity = 1;
+		energy = 2;
 		fText.gameObject.SetActive(true);
 		wText.gameObject.SetActive(true);
 		dText.gameObject.SetActive(true);
@@ -156,7 +198,7 @@ public class Slot : MonoBehaviour {
 	public void DeActivateWeather(){
 		weatherActive = false;
 		weatherImg.gameObject.SetActive(false);
-		prosperity += 2;
+		energy = 2;
 		UpdateText();
 	}
 

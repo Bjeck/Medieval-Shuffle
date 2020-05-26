@@ -36,7 +36,7 @@ public class MouseControl : MonoBehaviour {
 
 	public void DisplayCardToolTip(Card c){
 //		print("display");
-		tooltipText.text = (c.nam + "\n\n\nFear: "+c.fear+"\nWealth: "+c.wealth+"\nStatus: "+c.Status()+"\nUnruliness: "+c.unruliness) + "" +
+		tooltipText.text = (c.nam + "\n\n\nAuthority: "+c.fear+"\nWealth: "+c.wealth+"\nStatus: "+c.Status()+"\nUnruliness: "+c.unruliness) + "" +
 			"\n\n"+c.functionLong+"\n\n"+c.desc;
 		if(c == gm.playur.playerCard){
 			if(c.winAbove){
@@ -56,7 +56,7 @@ public class MouseControl : MonoBehaviour {
 
 	public void DisplaySlotToolTip(Slot c){
 		//		print("display");
-		string temp =  (c.slotName+"\n\nProsperity: "+c.prosperity+" \n\nChange in Wealth: "+c.changeWealth+"\nChange in Fear: "+c.changeFear+"\nChange in Defenses: "+c.changeReadiness);
+		string temp =  (c.slotName+"\n\nProsperity: "+c.energy+" \n\nChange in Wealth: "+c.changeMoney+"\nChange in Fear: "+c.changeAuthority+"\nChange in Defenses: "+c.changeDefense);
 
 		if(c.isBroken){
 			temp += "\n\n<color=#ff0000ff>Broken.</color> Wait "+(c.turnsToBeBroken+1)+" days to use this Slot again.";
