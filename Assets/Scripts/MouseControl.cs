@@ -36,7 +36,7 @@ public class MouseControl : MonoBehaviour {
 
 	public void DisplayCardToolTip(Card c){
 //		print("display");
-		tooltipText.text = (c.nam + "\n\n\nAuthority: "+c.fear+"\nWealth: "+c.wealth+"\nStatus: "+c.Status()+"\nUnruliness: "+c.unruliness) + "" +
+		tooltipText.text = (c.nam + "\n\n\nAuthority: "+c.auth+"\nWealth: "+c.wealth+"\nStatus: "+c.Status()+"\nUnruliness: "+c.unruliness) + "" +
 			"\n\n"+c.functionLong+"\n\n"+c.desc;
 		if(c == gm.playur.playerCard){
 			if(c.winAbove){

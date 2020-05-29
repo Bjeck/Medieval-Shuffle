@@ -38,6 +38,8 @@ public class Slot : MonoBehaviour {
 	public int turnsToBeBroken = 1;
 	int curTurnsBroken = 0;
 
+    public bool lockCardOnSlot = false;
+
     public SlotAddition slotAddition = null;
 
 	public Action<Card, int, int, int> OnNext;
@@ -45,7 +47,7 @@ public class Slot : MonoBehaviour {
 	public bool readyNext = false; Card refForNextChecK;
 	public string onNextDesc, onNextNextDesc;
 
-    public List<UnityEvent> possibleRandomEvents = new List<UnityEvent>();
+    public List<Action> possibleRandomEvents = new List<Action>();
 
 	public Image frame;
 	public Color defColor;
@@ -70,7 +72,12 @@ public class Slot : MonoBehaviour {
         fText.transform.parent.gameObject.SetActive(changeAuthority == 0 ? false : true);
 
         ChangeColor(defColor);
-	}
+
+        if (slotAddition != null)
+        {
+            slotAddition.Setup();
+        }
+    }
 
 
 	public virtual void ProcessOutComeForCard(){
@@ -90,9 +97,10 @@ public class Slot : MonoBehaviour {
             return;
 		}
 
-		if(cardOnMe != null && !weatherActive){
+		if(cardOnMe != null && !weatherActive)
+        {
 
-			cardOnMe.fear += changeAuthority;
+			cardOnMe.auth += changeAuthority;
 			cardOnMe.wealth += changeMoney;
 
             //IF 
@@ -103,9 +111,11 @@ public class Slot : MonoBehaviour {
                 availableMoney = 0;
             }
 
-            gm.ChangeReadiness(changeDefense);
+            gm.ChangeDefenses(Mathf.Min(changeDefense,cardOnMe.auth));
 
-			print(slotName+" PROCESSED "+cardOnMe.nam+". Fear "+cardOnMe.fear+". Wealth "+cardOnMe.wealth+". Energy is "+energy);
+			print(slotName+" PROCESSED "+cardOnMe.nam+". Fear "+cardOnMe.auth+". Wealth "+cardOnMe.wealth+". Energy is "+energy);
+
+            cardOnMe.OnTurn?.Invoke(this, cardOnMe);
 
 			if(OnNext != null && readyNext && cardOnMe != refForNextChecK){
 				print(slotName+" executed on next "+readyNext+" "+OnNext);
@@ -126,6 +136,16 @@ public class Slot : MonoBehaviour {
 					onNextImg.gameObject.SetActive(false);
 				}
 			}
+
+
+            if(possibleRandomEvents.Count > 0)
+            {
+                int random = UnityEngine.Random.Range(0, possibleRandomEvents.Count);
+                if(random < possibleRandomEvents.Count)
+                {
+                    possibleRandomEvents[random].Invoke();
+                }
+            }
 
 
 			refForNextChecK = null;
@@ -221,6 +241,13 @@ public class Slot : MonoBehaviour {
 	public void ChangeColor(Color c){
 		frame.color = c;
 	}
+
+    public void AddAvailableMoney(int money)
+    {
+        availableMoney += money;
+        moneyText.transform.parent.gameObject.SetActive(true);
+        UpdateText();
+    }
 
 
 

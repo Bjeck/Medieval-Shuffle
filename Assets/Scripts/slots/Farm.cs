@@ -27,5 +27,9 @@ public class Farm : SlotAddition
     {
 
     }
-    
+
+    public override void Setup()
+    {
+
+    }
 }

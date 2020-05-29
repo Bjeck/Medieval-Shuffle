@@ -7,8 +7,8 @@ using System.Collections.Generic;
 
 public enum WinVariable {Wealth, Fear, Status, Prosperity, Defenses, DeadKing}
 
-public class Card : MonoBehaviour {
-
+public class Card : MonoBehaviour
+{
 	public GameManager gm;
 	public Vector3 PosInBar;
 	public LayerMask layer;
@@ -27,13 +27,17 @@ public class Card : MonoBehaviour {
 	public string desc;
 	public string function, functionLong;
 
-	public int fear = 0;
+	public int auth = 0;
 	public int wealth = 0;
 	public int unruliness = 0;
 
-	public Action<Slot, Card> onPlayed; 
-	public Action<Slot, Card, int> onPlayedValueChange; 
-	public Action<Card, int, int, int> onNextTurn;
+    public Slot slotIAmOn = null;
+
+	public Action<Slot, Card> OnPlayed; 
+	public Action<Slot, Card, int> OnPlayedValueChange;
+    public Action<Slot, Card> OnTurn;
+	public Action<Card, int, int, int> OnNextTurn;
+    public Action<Card> OnIdle;
 
 	bool isLerping = false;
 	Vector3 endOfLerp;
@@ -167,7 +171,8 @@ public class Card : MonoBehaviour {
 		isPlaced = true;
 		isInHand = false;
 		s.cardOnMe = this;
-		gm.sound.PlayAudio(gm.sound.cardPlace);
+        slotIAmOn = s;
+        gm.sound.PlayAudio(gm.sound.cardPlace);
 		s.ChangeColor(s.cardColor);
 		if(anim.GetBool("flipped")){
 			CardFlip(false);
@@ -180,15 +185,15 @@ public class Card : MonoBehaviour {
 	public void Do(Slot so){
 	//	print("RARH, I'm DOING SOMETHING");
 
-		if(onPlayed != null){
-			onPlayed(so, this); //Executing the delegate function.
+		if(OnPlayed != null){
+			OnPlayed(so, this); //Executing the delegate function.
 		}
-		if(onPlayedValueChange != null){
-			onPlayedValueChange(so, this, 0);
+		if(OnPlayedValueChange != null){
+			OnPlayedValueChange(so, this, 0);
 		}
-		if(onNextTurn != null){
+		if(OnNextTurn != null){
 			print("GAVE "+so.slotName+" next Turn thing");
-			so.SetNext(onNextTurn, this);
+			so.SetNext(OnNextTurn, this);
 		}
 		//Destroy(gameObject);
 	}
@@ -198,7 +203,7 @@ public class Card : MonoBehaviour {
 
 
 	public int Status(){
-		return wealth+fear;
+		return wealth+auth;
 	}
 
 	public void DisplayToolTip(){
@@ -212,7 +217,7 @@ public class Card : MonoBehaviour {
 	}
 
 	public void SetCardText(){
-		fearText.text = ""+fear;
+		fearText.text = ""+auth;
 		wealthText.text = ""+wealth;
 		unruliText.text = ""+unruliness;
 		statusText.text = ""+Status();

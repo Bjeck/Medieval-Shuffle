@@ -7,6 +7,8 @@ public abstract class SlotAddition : MonoBehaviour
 
     public Slot slotBase;
 
+    public abstract void Setup();
+
     public abstract void PreProcessOutcome();
 
     public abstract void PostProcessOutcome();

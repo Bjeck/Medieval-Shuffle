@@ -155,7 +155,7 @@ public class GameOver : MonoBehaviour {
 			nr = gm.readiness;
 			break;
 		case WinVariable.Fear:
-			nr = c.fear;
+			nr = c.auth;
 			break;
 		case WinVariable.Wealth:
 			nr = c.wealth;
@@ -224,7 +224,7 @@ public class GameOver : MonoBehaviour {
 			else if(c.wealth < 1){
 				sToSend += "Without any money to 'drop', she rushes to the Kingdom's treasury to pick up some more. Again. And again. The King is forced to quarantine her.\n";
 			}
-			else if(IsCardInList("bastard") && c.fear < 2){
+			else if(IsCardInList("bastard") && c.auth < 2){
 				sToSend += "The shame of the existence of the Bastard Child breaks her and she hides in her chambers.";
 			}
 			else{
@@ -234,7 +234,7 @@ public class GameOver : MonoBehaviour {
 
 		case "jester":
 			sToSend = "The Jester\n\n";
-			if(c.fear > 8){
+			if(c.auth > 8){
 				sToSend += "Becomes a hired assassin feared far and wide. A true agent of the Kingdom.";
 			}
 			else if(c.wealth > 8){
@@ -263,7 +263,7 @@ public class GameOver : MonoBehaviour {
 			if(c.wealth > 10){
 				sToSend += "With her great wealth, she hires an assassin to kill the King and Queen, to at last become the rightful ruler.";
 			}
-			else if(IsCardInList("prince") && c.fear > 5){
+			else if(IsCardInList("prince") && c.auth > 5){
 				sToSend += "She trains as a witcher and seeks to uncover the mysteries of the forest. Something must have turned the prince into a frog.";
 			}
 			else{
@@ -276,7 +276,7 @@ public class GameOver : MonoBehaviour {
 			if(c.wealth > 10){
 				sToSend += "Spends all his money doing anything but improving the defenses. It seems he almost wants the country to be invaded.";
 			}
-			else if(c.fear > 10){
+			else if(c.auth > 10){
 				sToSend += "Strikes a terror into anyone in The Kingdom. Some hopes it'll even help keep the invaders at bay. Yet he has not seemed to care much for helping.";
 			}
 			else{
@@ -313,7 +313,7 @@ public class GameOver : MonoBehaviour {
 			if(c.wealth > 10){
 				sToSend += "With her amassed wealth, she purchases a villa on the edge of the Kingdom and retires her criminal career";
 			}
-			else if(c.fear > 8 && c.wealth < 3){
+			else if(c.auth > 8 && c.wealth < 3){
 				sToSend += "Angry at her low wealth, she plans the greatest heist in the Kingdom's history.";
 			}
 			else if(IsCardInList("executioner")){

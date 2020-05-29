@@ -17,12 +17,24 @@ public class CardInitialization : MonoBehaviour {
 		newCard.nam = "The Gutsy Jester";
 		newCard.desc = "A laugh's all you get.";
 		newCard.id = "jester";
-		newCard.fear = 1;
+		newCard.auth = 1;
 		newCard.wealth = 1;
 		newCard.unruliness = 3;
 		newCard.winvar = WinVariable.Wealth;
 		newCard.winCondition = 15;
-		newCard.onPlayed = (sl, c) => {FunctionToExecute(sl, c);};
+		newCard.OnPlayed = (sl, c) => {FunctionToExecute(sl, c);};
+        newCard.OnIdle = (c) => 
+        {
+            int r = Random.Range(0, 2);
+            if(r == 0)
+            {
+                ChangeAuthority(c, 1);
+            }
+            else
+            {
+                ChangeWealth(c, 1);
+            }
+        };
 		newCard.transform.SetParent(gm.cardBar.transform);
 		newCard.GetComponent<RectTransform>().localScale = Vector3.one;
 		AdjustVisuals(newCard);
@@ -35,13 +47,13 @@ public class CardInitialization : MonoBehaviour {
 		newCard.id = "prince";
 		newCard.function = "Defenses -2";
 		newCard.functionLong = "Decreases The Kingdom's Defenses with 2";
-		newCard.fear = 2;
+		newCard.auth = 2;
 		newCard.wealth = 6;
 		newCard.unruliness = 0;
 		newCard.winvar = WinVariable.Prosperity;
 		newCard.winCondition = 3;
 		newCard.winAbove = false;
-		newCard.onPlayed = (sl, c) => {FunctionToExecute(sl, c); ChangeDefenses(sl,c,-2);};
+		newCard.OnIdle = (c) => {ChangeDefenses(-2); ChangeTreasury(2); };
 		newCard.transform.SetParent(gm.cardBar.transform);
 		newCard.GetComponent<RectTransform>().localScale = Vector3.one;
 		AdjustVisuals(newCard);
@@ -54,10 +66,11 @@ public class CardInitialization : MonoBehaviour {
 		newCard.id = "king";
 		newCard.function = "Prosperity -2";
 		newCard.functionLong = "Decreases Prosperity with 2";
-		newCard.fear = 4;
+		newCard.auth = 4;
 		newCard.wealth = 10;
 		newCard.unruliness = 5;
-		newCard.onPlayed = (sl, c) => {FunctionToExecute(sl, c); ChangeProsperity(sl,c,-2);}; 	//ALWAYS DECREASES PROSPERITY BY 2
+        //newCard.onPlayed = (sl, c) => {FunctionToExecute(sl, c); ChangeProsperity(sl,c,-2);}; 	//ALWAYS DECREASES PROSPERITY BY 2
+        newCard.OnIdle = (c) => { ChangeTreasury(-2); ChangeWealth(c, 2); };
 		newCard.transform.SetParent(gm.cardBar.transform);
 		newCard.GetComponent<RectTransform>().localScale = Vector3.one;
 		AdjustVisuals(newCard);
@@ -70,14 +83,15 @@ public class CardInitialization : MonoBehaviour {
 		newCard.id = "queen";
 		newCard.function = "Next Card: +2 Wealth";
 		newCard.functionLong = "Leaves Money. The Next Card on this Slot gets +2 Wealth";
-		newCard.fear = 2;
+		newCard.auth = 2;
 		newCard.wealth = 5;
 		newCard.unruliness = 0;
 		newCard.winvar = WinVariable.Prosperity;
 		newCard.winCondition = 25;
 		newCard.winAbove = true;
-		newCard.onPlayed = (sl, c) => {FunctionToExecute(sl, c); };
-		newCard.onNextTurn = (sl, i, i2, i3) => {ChangeValuesToNextCard(sl, i, 2, i3);};
+        newCard.OnTurn = (sl, c) => { ChangeMoneyOnThisSlot(sl, 2); };
+        newCard.OnIdle = (c) => { ChangeMoneyOnSlot("Village", 2); ChangeTreasury(-2); };
+		//newCard.onNextTurn = (sl, i, i2, i3) => {ChangeValuesToNextCard(sl, i, 2, i3);};
 		newCard.transform.SetParent(gm.cardBar.transform);
 		newCard.GetComponent<RectTransform>().localScale = Vector3.one;
 		AdjustVisuals(newCard);
@@ -90,14 +104,14 @@ public class CardInitialization : MonoBehaviour {
 		newCard.id = "knight";
 		newCard.function = "Next Card: -2 Wealth";
 		newCard.functionLong = "Drinks. The Next Card on this Slot gets -2 Wealth";
-		newCard.fear = 4;
+		newCard.auth = 4;
 		newCard.wealth = 1;
 		newCard.unruliness = 0;
 		newCard.winvar = WinVariable.Status;
 		newCard.winCondition = 1;
 		newCard.winAbove = false;
-		newCard.onPlayed = (sl, c) => {FunctionToExecute(sl, c);};
-		newCard.onNextTurn = (sl, i, i2, i3) => {ChangeValuesToNextCard(sl, i, -2, i3);};
+		//newCard.OnPlayed = (sl, c) => {FunctionToExecute(sl, c);};
+		newCard.OnNextTurn = (sl, i, i2, i3) => {ChangeValuesToNextCard(sl, i, -2, i3);};
 		newCard.transform.SetParent(gm.cardBar.transform);
 		newCard.GetComponent<RectTransform>().localScale = Vector3.one;
 		AdjustVisuals(newCard);
@@ -108,16 +122,17 @@ public class CardInitialization : MonoBehaviour {
 		newCard.nam = "The Careful Princess";
 		newCard.desc = "She awaits the right time to strike.";
 		newCard.id = "princess";
-		newCard.function = "Prosperity -1. Fear +2";
-		newCard.functionLong = "Lays plans. Decreases Prosperity with 1, but gains 2 fear.";
-		newCard.fear = 2;
+		newCard.function = "Authority +2";
+		newCard.functionLong = "Lays plans. Gains 2 authority.";
+		newCard.auth = 2;
 		newCard.wealth = 5;
 		newCard.unruliness = 0;
 		newCard.winvar = WinVariable.DeadKing;
 		newCard.winCondition = 1;
 		newCard.winAbove = true;
-		newCard.onPlayed = (sl, c) => {FunctionToExecute(sl, c);};
-		newCard.onPlayedValueChange = (sl, c, i) => {ChangeProsperity(sl, c, -1); ChangeFear(sl,c,2);}; 
+        //newCard.onPlayed = (sl, c) => {FunctionToExecute(sl, c);};
+        //newCard.onPlayedValueChange = (sl, c, i) => {ChangeProsperity(sl, c, -1); ChangeFear(c,2);}; 
+        newCard.OnIdle = (c) => { ChangeAuthority(c, 2); };
 		newCard.transform.SetParent(gm.cardBar.transform);
 		newCard.GetComponent<RectTransform>().localScale = Vector3.one;
 		AdjustVisuals(newCard);
@@ -130,14 +145,14 @@ public class CardInitialization : MonoBehaviour {
 		newCard.id = "executioner";
 		newCard.function = "Next Card: -2 Fear";
 		newCard.functionLong = "The Next Card on this Slot gets -2 Fear";
-		newCard.fear = 8;
+		newCard.auth = 8;
 		newCard.wealth = 3;
 		newCard.unruliness = 1;
 		newCard.winvar = WinVariable.Prosperity;
 		newCard.winCondition = 25;
 		newCard.winAbove = true;
-		newCard.onPlayed = (sl, c) => {FunctionToExecute(sl, c);};
-		newCard.onNextTurn = (sl, i, i2, i3) => {ChangeValuesToNextCard(sl, -2, i2, i3);};
+		newCard.OnPlayed = (sl, c) => {FunctionToExecute(sl, c);};
+		newCard.OnNextTurn = (sl, i, i2, i3) => {ChangeValuesToNextCard(sl, -2, i2, i3);};
 		newCard.transform.SetParent(gm.cardBar.transform);
 		newCard.GetComponent<RectTransform>().localScale = Vector3.one;
 		AdjustVisuals(newCard);
@@ -150,14 +165,15 @@ public class CardInitialization : MonoBehaviour {
 		newCard.id = "thief";
 		newCard.function = "Prosperity -2. Wealth +2";
 		newCard.functionLong = "Steals. Decreases Prosperity with 2, but gains 2 wealth.";
-		newCard.fear = 6;
+		newCard.auth = 6;
 		newCard.wealth = 4;
 		newCard.unruliness = 3;
 		newCard.winvar = WinVariable.Fear;
 		newCard.winCondition = 20;
 		newCard.winAbove = true;
-		newCard.onPlayed = (sl, c) => {FunctionToExecute(sl, c);};
-		newCard.onPlayedValueChange = (sl, c, i) => {ChangeProsperity(sl, c, -2); ChangeWealth(sl,c,2);}; 
+		newCard.OnPlayed = (sl, c) => {FunctionToExecute(sl, c);};
+		newCard.OnPlayedValueChange = (sl, c, i) => {ChangeProsperity(sl, c, -2); ChangeWealth(c,2);};
+        newCard.OnIdle = (c) => { ChangeTreasury(-2); ChangeWealth(c, 2); };
 		newCard.transform.SetParent(gm.cardBar.transform);
 		newCard.GetComponent<RectTransform>().localScale = Vector3.one;
 		AdjustVisuals(newCard);
@@ -170,13 +186,13 @@ public class CardInitialization : MonoBehaviour {
 		newCard.id = "magician";
 		newCard.function = "Changes prosperity randomly";
 		newCard.functionLong = "Has a random effect on Prosperity between -2/+2";
-		newCard.fear = 5;
+		newCard.auth = 5;
 		newCard.wealth = 1;
 		newCard.unruliness = 0;
 		newCard.winvar = WinVariable.Status;
 		newCard.winCondition = 22;
 		newCard.winAbove = true;
-		newCard.onPlayed = (sl, c) => {ChangeProsperityRandom(sl, c);}; 		//CHANGES PROSPERITY TO SOMETHING RANDOM.
+		newCard.OnPlayed = (sl, c) => {ChangeProsperityRandom(sl, c);}; 		//CHANGES PROSPERITY TO SOMETHING RANDOM.
 		newCard.transform.SetParent(gm.cardBar.transform);
 		newCard.GetComponent<RectTransform>().localScale = Vector3.one;
 		AdjustVisuals(newCard);
@@ -189,10 +205,10 @@ public class CardInitialization : MonoBehaviour {
 		newCard.id = "baby";
 		newCard.function = "Prosperity +2";
 		newCard.functionLong = "Improves Prosperity with 2";
-		newCard.fear = 0;
+		newCard.auth = 0;
 		newCard.wealth = 3;
 		newCard.unruliness = -4;
-		newCard.onPlayedValueChange = (sl, c, i) => {ChangeProsperity(sl, c, 2);}; 		//Improves prosperity with 2
+		newCard.OnPlayedValueChange = (sl, c, i) => {ChangeProsperity(sl, c, 2);}; 		//Improves prosperity with 2
 		newCard.transform.SetParent(gm.cardBar.transform);
 		newCard.GetComponent<RectTransform>().localScale = Vector3.one;
 		AdjustVisuals(newCard);
@@ -205,10 +221,10 @@ public class CardInitialization : MonoBehaviour {
 		newCard.id = "bastard";
 		newCard.function = "Prosperity -1";
 		newCard.functionLong = "Decreases Prosperity with 1";
-		newCard.fear = 3;
+		newCard.auth = 3;
 		newCard.wealth = 0;
 		newCard.unruliness = -1;
-		newCard.onPlayedValueChange = (sl, c, i) => {ChangeProsperity(sl, c, -1);}; 		//decreases prosperity with 1
+		newCard.OnPlayedValueChange = (sl, c, i) => {ChangeProsperity(sl, c, -1);}; 		//decreases prosperity with 1
 		newCard.transform.SetParent(gm.cardBar.transform);
 		newCard.GetComponent<RectTransform>().localScale = Vector3.one;
 		AdjustVisuals(newCard);
@@ -219,16 +235,17 @@ public class CardInitialization : MonoBehaviour {
 		newCard.nam = "The Confused Stranger";
 		newCard.desc = "She doesn't know the language, yet everyone wants to talk to her.";
 		newCard.id = "stranger";
-		newCard.function = "Wealth -2, Fear +2";
-		newCard.functionLong = "Decreases Wealth with 2, Increases Fear with 2";
-		newCard.fear = 2;
+		newCard.function = "Defenses -2";
+		newCard.functionLong = "Spies? Decreases Defenses -2.";
+		newCard.auth = 2;
 		newCard.wealth = 4;
 		newCard.unruliness = 1;
 		newCard.winvar = WinVariable.Defenses;
 		newCard.winCondition = 10;
 		newCard.winAbove = false;
-		newCard.onPlayed = (sl, c) => {FunctionToExecute(sl, c);};
-		newCard.onPlayedValueChange = (sl, c, i) => {ChangeWealth(sl,c,-2); ChangeFear(sl,c,2);}; 
+		//newCard.onPlayed = (sl, c) => {FunctionToExecute(sl, c);};
+		//newCard.onPlayedValueChange = (sl, c, i) => {ChangeWealth(c,-2); ChangeAuthority(c,2);};
+        newCard.OnIdle = (c) => { ChangeDefenses(-2); };
 		newCard.transform.SetParent(gm.cardBar.transform);
 		newCard.GetComponent<RectTransform>().localScale = Vector3.one;
 		AdjustVisuals(newCard);
@@ -247,12 +264,17 @@ public class CardInitialization : MonoBehaviour {
 
 
 
-	public void ChangeDefenses(Slot so, Card c, int i){
-		gm.ChangeReadiness(i);
-		print(c.nam+" Changed defenses from "+so.slotName+" because I'm "+c.nam);
+	public void ChangeDefenses(int i)
+    {
+		gm.ChangeDefenses(i);
 	}
 
-	public void ChangeProsperity(Slot so, Card c, int i){
+    public void ChangeTreasury(int i)
+    {
+        gm.ChangeTreasury(i);
+    }
+
+    public void ChangeProsperity(Slot so, Card c, int i){
 	//	so.prosperity += (i);
 	//	print(c.nam+" Changed prosperity of "+so.slotName+" from "+ (so.prosperity-i) + " to "+so.prosperity);
 	}
@@ -262,22 +284,33 @@ public class CardInitialization : MonoBehaviour {
 	//	print("Changed "+so.slotName+"'s prosperity! Now "+so.prosperity);
 	}
 
-	public void ChangeWealth(Slot s, Card c, int i){
+	public void ChangeWealth(Card c, int i){
 		print("Changed wealth "+c.nam +" "+i);
 		c.wealth += i;
 	}
 
-	public void ChangeFear(Slot s, Card c, int i){
+	public void ChangeAuthority(Card c, int i){
 		print("Changed fear "+c.nam +" "+i);
-		c.fear += i;
+		c.auth += i;
 	}
 
 	public void ChangeValuesToNextCard(Card c, int f, int w, int u){
 		print("CARD CHANGE "+f+" "+w+" "+u);
-		c.fear += f;
+		c.auth += f;
 		c.wealth += w;
 		c.unruliness += u;
 	}
+
+    public void ChangeMoneyOnSlot(string slotname, int moneyToAdd)
+    {
+        Slot sl = gm.slots.Find(x => x.slotName == slotname);
+        ChangeMoneyOnThisSlot(sl, moneyToAdd);
+    }
+
+    public void ChangeMoneyOnThisSlot(Slot sl, int money)
+    {
+        sl.AddAvailableMoney(money);
+    }
 
 
 	public void FunctionToExecute(Slot so, Card c){

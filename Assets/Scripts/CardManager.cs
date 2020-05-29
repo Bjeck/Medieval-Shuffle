@@ -182,7 +182,7 @@ public class CardManager : MonoBehaviour {
 			}
 		}
 		else if(gm.targetReason == TargetReason.Threaten){
-			if(briber.fear <= bribee.fear){
+			if(briber.auth <= bribee.auth){
 				gm.AddMessageToLog("Can only threaten if you have more Fear than target.");
 				return false;
 			}
@@ -219,14 +219,14 @@ public class CardManager : MonoBehaviour {
 	}
 
 	public void Threaten(Card briber, Card bribee){
-		if(briber.fear < bribee.fear){
+		if(briber.auth < bribee.auth){
 			gm.AddMessageToLog("Can only threaten if you have more Fear than target.");
 			return;
 		}
 		else{
 			print(briber.id +" THREATENING "+bribee.id);
-			briber.fear += bribee.fear;
-			bribee.fear -= bribee.fear;
+			briber.auth += bribee.auth;
+			bribee.auth -= bribee.auth;
 			bribee.unruliness += 3;
 			gm.sound.PlayAudio(gm.sound.duelThreaten);
 			gm.AddMessageToLog(briber.nam + " threatened "+bribee.nam + ".");

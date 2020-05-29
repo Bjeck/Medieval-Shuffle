@@ -25,4 +25,9 @@ public class Village : SlotAddition
     {
         
     }
+
+    public override void Setup()
+    {
+
+    }
 }

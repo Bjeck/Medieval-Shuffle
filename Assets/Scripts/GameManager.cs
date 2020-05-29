@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour {
 	public CardManager cm;
 	public GameOver go;
 	public Sound sound;
+    public RandomSlotEvents randomEvents;
 	public List<string> playerStartCards = new List<string>();
 	public List<Card> allCards = new List<Card>();
 	public List<Card> deadCards = new List<Card>();
@@ -59,7 +60,7 @@ public class GameManager : MonoBehaviour {
 		print("running setup");
 		SetupPlayerDeck();
         ChangeTreasury(10);
-		ChangeReadiness(0);
+		ChangeDefenses(0);
 
 		SwitchState(startState);
 	
@@ -103,12 +104,13 @@ public class GameManager : MonoBehaviour {
 	IEnumerator DealCoroutine(){
 
 		sound.PlayAudio(sound.shuffle);
-		foreach(Card c in playur.currentDeck){
-			c.isInHand = false;
-			c.isPlaced = false;
-			c.transform.SetParent(cardBar.transform);
-			c.CardLerp(c,deckPos.position);
-			c.CardFlip(true);
+		foreach(Card c in playur.currentDeck)
+        {
+            c.isInHand = false;
+            c.isPlaced = false;
+            c.transform.SetParent(cardBar.transform);
+            c.CardLerp(c, deckPos.position);
+            c.CardFlip(true);
 		}
 
 		yield return new WaitForSeconds(0.5f);
@@ -183,8 +185,9 @@ public class GameManager : MonoBehaviour {
 			if(!c.isPlaced && c.isInHand){
 				c.unruliness++;
 				c.ShuffleAnimation();
+                c.OnIdle?.Invoke(c);
 
-				if(firstRevolt){
+                if (firstRevolt){
 					AddMessageToLog("Those who stay at home grow unruly.");
 					firstRevolt = false;
 				}
@@ -244,10 +247,11 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-
 	//END OUTCOME
 
-	public void ChangeReadiness(int ch){
+
+
+	public void ChangeDefenses(int ch){
 		readiness += ch;
 		readyText.text = "Defenses: "+readiness+"/"+readinessCondition;
 	}
